@@ -14,3 +14,10 @@ type PostRepository interface {
 	CreatePost(ctx context.Context, post model.Post) (int, error)
 	GetPost(ctx context.Context, postId int) (model.Post, error)
 }
+
+type BookRepository interface {
+	GetBook(ctx context.Context, bookId int) (model.Book, error)
+	GetBookByName(ctx context.Context, bookName string) (model.Book, error)
+	GetBooksByAuthor(ctx context.Context, bookAuthor string) ([]model.Book, error)
+	GetBooksByGenre(ctx context.Context, bookGenre string) ([]model.Book, error)
+}
