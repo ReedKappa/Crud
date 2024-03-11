@@ -13,6 +13,19 @@ type _bookRepository struct {
 	db *db.Db
 }
 
+func (bookRepository _bookRepository) AddBook(ctx context.Context, book model.Book) (int, error) {
+	bookDb := dbModel.Book(book)
+	var id int
+
+	err := bookRepository.db.PgConn.QueryRow(ctx,
+		`INSERT INTO public.post(name, author, genre) values ($1,$2,$3) RETURNING id`,
+		bookDb.Name,
+		bookDb.Author,
+		bookDb.Genre).Scan(&id)
+
+	return id, err
+}
+
 func (bookRepository _bookRepository) GetBook(ctx context.Context, bookId int) (model.Book, error) {
 	var book dbModel.Book
 
@@ -63,13 +76,24 @@ func (bookRepository _bookRepository) GetBooksByAuthor(ctx context.Context, book
 }
 
 func (bookRepository _bookRepository) GetBooksByGenre(ctx context.Context, bookGenre string) ([]model.Book, error) {
-	//TODO implement me
-	panic("implement me")
-}
+	row, _ := bookRepository.db.PgConn.Query(ctx,
+		`SELECT b.name, b.author, b.genre FROM public.book b WHERE b.genre LIKE $1`,
+		bookGenre)
 
-func (bookRepository _bookRepository) AddBook(ctx context.Context, book model.Book) (int, error) {
-	//TODO implement me
-	panic("implement me")
+	var models []model.Book
+
+	for row.Next() {
+		var book dbModel.Book
+		err := row.Scan(&book.Name, &book.Author, &book.Genre)
+
+		if err != nil {
+			return nil, fmt.Errorf("Ошибка при получении книги: %s", err.Error())
+		}
+
+		models = append(models, model.Book(book))
+	}
+
+	return models, nil
 }
 
 func NewBookRepo(db *db.Db) repository.BookRepository { return _bookRepository{db} }
