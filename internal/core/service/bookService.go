@@ -18,23 +18,23 @@ func NewBookService(repo repository.BookRepository) service.BookService {
 }
 
 func (bookService _bookService) GetBook(ctx context.Context, bookId int) (model.Book, error) {
-	return bookService.GetBook(ctx, bookId)
+	return bookService.repo.GetBook(ctx, bookId)
 }
 
 func (bookService _bookService) GetBookByName(ctx context.Context, bookName string) (model.Book, error) {
-	return bookService.GetBookByName(ctx, bookName)
+	return bookService.repo.GetBookByName(ctx, bookName)
 }
 
 func (bookService _bookService) GetBooksByAuthor(ctx context.Context, bookAuthor string) ([]model.Book, error) {
-	return bookService.GetBooksByAuthor(ctx, bookAuthor)
+	return bookService.repo.GetBooksByAuthor(ctx, bookAuthor)
 }
 
 func (bookService _bookService) GetBooksByGenre(ctx context.Context, bookGenre string) ([]model.Book, error) {
-	return bookService.GetBooksByGenre(ctx, bookGenre)
+	return bookService.repo.GetBooksByGenre(ctx, bookGenre)
 }
 
 func (bookService _bookService) AddBook(ctx context.Context, book model.Book) (int, error) {
-	id, err := bookService.AddBook(ctx, book)
+	id, err := bookService.repo.AddBook(ctx, book)
 
 	if err != nil {
 		slog.Error(err.Error())

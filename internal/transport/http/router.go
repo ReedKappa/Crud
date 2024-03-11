@@ -17,11 +17,11 @@ func InitRoutes(service service.AuthService, postService service.PostService, bo
 		api.POST("/post", handler.CreatePost(postService))
 		api.GET("/post/:id", handler.GetPost(postService))
 
-		api.POST("/book", handler.AddBook(bookService))
-		api.GET("/book/:id", handler.GetBook(bookService))
-		api.GET("/book/:name", handler.GetBookByName(bookService))
-		api.GET("/book/:author", handler.GetBooksByAuthor(bookService))
-		api.GET("/book/:genre", handler.GetBooksByGenre(bookService))
+		api.POST("/book/add", handler.AddBook(bookService))
+		api.GET("/book/id/:id", handler.GetBook(bookService))
+		api.GET("/book/name/:name", handler.GetBookByName(bookService))
+		api.GET("/book/author/:author", handler.GetBooksByAuthor(bookService))
+		api.GET("/book/genre/:genre", handler.GetBooksByGenre(bookService))
 	}
 	return router
 }
