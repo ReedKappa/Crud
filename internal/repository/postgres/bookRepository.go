@@ -67,4 +67,9 @@ func (bookRepository _bookRepository) GetBooksByGenre(ctx context.Context, bookG
 	panic("implement me")
 }
 
+func (bookRepository _bookRepository) AddBook(ctx context.Context, book model.Book) (int, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func NewBookRepo(db *db.Db) repository.BookRepository { return _bookRepository{db} }

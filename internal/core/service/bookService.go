@@ -33,8 +33,8 @@ func (bookService _bookService) GetBooksByGenre(ctx context.Context, bookGenre s
 	return bookService.GetBooksByGenre(ctx, bookGenre)
 }
 
-func (bookService _bookService) AddBook(ctx context.Context, bookName, bookAuthor, bookGenre string) (int, error) {
-	id, err := bookService.AddBook(ctx, bookName, bookAuthor, bookGenre)
+func (bookService _bookService) AddBook(ctx context.Context, book model.Book) (int, error) {
+	id, err := bookService.AddBook(ctx, book)
 
 	if err != nil {
 		slog.Error(err.Error())

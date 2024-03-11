@@ -20,4 +20,5 @@ type BookRepository interface {
 	GetBookByName(ctx context.Context, bookName string) (model.Book, error)
 	GetBooksByAuthor(ctx context.Context, bookAuthor string) ([]model.Book, error)
 	GetBooksByGenre(ctx context.Context, bookGenre string) ([]model.Book, error)
+	AddBook(ctx context.Context, book model.Book) (int, error)
 }
