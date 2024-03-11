@@ -15,10 +15,11 @@ type _bookRepository struct {
 
 func (bookRepository _bookRepository) AddBook(ctx context.Context, book model.Book) (int, error) {
 	bookDb := dbModel.Book(book)
+
 	var id int
 
 	err := bookRepository.db.PgConn.QueryRow(ctx,
-		`INSERT INTO public.post(name, author, genre) values ($1,$2,$3) RETURNING id`,
+		`INSERT INTO public.book(name, author, genre) values ($1,$2,$3) RETURNING id`,
 		bookDb.Name,
 		bookDb.Author,
 		bookDb.Genre).Scan(&id)
