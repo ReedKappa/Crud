@@ -25,7 +25,7 @@ func InitRoutes(service service.AuthService, postService service.PostService, bo
 		api.GET("/book/genre/:genre", handler.GetBooksByGenre(bookService))
 
 		api.GET("/favorite/get/:login", handler.GetFavorite(favoriteService))
-		api.GET("/favorite/add", handler.AddFavorite(favoriteService))
+		api.POST("/favorite/add", handler.AddFavorite(favoriteService))
 	}
 	return router
 }
