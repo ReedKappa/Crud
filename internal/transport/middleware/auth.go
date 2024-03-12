@@ -12,28 +12,15 @@ import (
 )
 
 func AuthMiddleware(c *gin.Context) {
-	auth := c.GetHeader("Authorization")
 
-	if auth == "" {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, "invalid")
-		return
-	}
+	claims := validateAuth(c)
 
-	splitted := strings.Split(auth, " ")
-
-	login, err := parseToken(splitted[1])
-
-	if err != nil {
-		slog.Error(err.Error())
-		c.AbortWithStatusJSON(http.StatusUnauthorized, "invalid token")
-	}
-
-	c.Set("user", login)
+	c.Set("user", claims.Login)
 
 	c.Next()
 }
 
-func parseToken(token string) (string, error) {
+func parseToken(token string) (service.TokenClaims, error) {
 	// at - access token
 	at, err := jwt.ParseWithClaims(token, &service.TokenClaims{},
 		func(token *jwt.Token) (interface{}, error) {
@@ -45,14 +32,45 @@ func parseToken(token string) (string, error) {
 		})
 
 	if err != nil {
-		return "", err
+		return service.TokenClaims{}, err
 	}
 
 	claims, ok := at.Claims.(*service.TokenClaims)
 
 	if !ok {
-		return "", err
+		return service.TokenClaims{}, err
 	}
 
-	return claims.Login, nil
+	return *claims, nil
+}
+
+func validateAuth(c *gin.Context) service.TokenClaims {
+	auth := c.GetHeader("Authorization")
+
+	if auth == "" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, "invalid")
+		return service.TokenClaims{}
+	}
+
+	splitted := strings.Split(auth, " ")
+
+	claims, err := parseToken(splitted[1])
+
+	if err != nil {
+		slog.Error(err.Error())
+		c.AbortWithStatusJSON(http.StatusUnauthorized, "invalid token")
+	}
+
+	return claims
+}
+
+func AdminAuthMiddleware(c *gin.Context) {
+	claims := validateAuth(c)
+	if !claims.IsAdmin {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, "invalid")
+		return
+	}
+	c.Set("user", claims.Login)
+
+	c.Next()
 }

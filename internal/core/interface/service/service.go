@@ -6,8 +6,8 @@ import (
 )
 
 type AuthService interface {
-	Register(ctx context.Context, login, password string) (string, error)
-	GenerateToken(ctx context.Context, login, password string) (string, error)
+	Register(ctx context.Context, login, password string, isAdmin bool) (string, error)
+	GenerateToken(ctx context.Context, login, password string, isAdmin bool) (string, error)
 }
 
 type PostService interface {

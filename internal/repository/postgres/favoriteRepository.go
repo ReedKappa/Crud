@@ -25,7 +25,7 @@ func (favoriteRepository _favoriteRepository) AddFavorite(ctx context.Context, l
 
 func (favoriteRepository _favoriteRepository) GetFavorite(ctx context.Context, login string) ([]model.Book, error) {
 	row, _ := favoriteRepository.db.PgConn.Query(ctx,
-		`SELECT f.login, b.author, b.genre, b.name FROM public.favorite f join public.book b on f.book_id = b.id WHERE f.login LIKE $1`,
+		`SELECT b.author, b.genre, b.name FROM public.favorite f join public.book b on f.id = b.id WHERE f.login LIKE $1`,
 		login)
 
 	var models []model.Book

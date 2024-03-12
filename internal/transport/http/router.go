@@ -18,7 +18,6 @@ func InitRoutes(service service.AuthService, postService service.PostService, bo
 		api.POST("/post", handler.CreatePost(postService))
 		api.GET("/post/:id", handler.GetPost(postService))
 
-		api.POST("/book/add", handler.AddBook(bookService))
 		api.GET("/book/id/:id", handler.GetBook(bookService))
 		api.GET("/book/name/:name", handler.GetBookByName(bookService))
 		api.GET("/book/author/:author", handler.GetBooksByAuthor(bookService))
@@ -26,6 +25,11 @@ func InitRoutes(service service.AuthService, postService service.PostService, bo
 
 		api.GET("/favorite/get/:login", handler.GetFavorite(favoriteService))
 		api.POST("/favorite/add", handler.AddFavorite(favoriteService))
+	}
+
+	admin := router.Group("api/admin", middleware.AdminAuthMiddleware)
+	{
+		admin.POST("/book/add", handler.AddBook(bookService))
 	}
 	return router
 }

@@ -10,6 +10,7 @@ import (
 type userDB struct {
 	Login    string `db:"login"`
 	Password string `db:"password"`
+	IsAdmin  bool   `db:"isadmin"`
 }
 
 type _authRepo struct {
@@ -33,11 +34,11 @@ func (repo _authRepo) GetUser(ctx context.Context, login, hashPassword string) (
 
 }
 
-func (repo _authRepo) Register(ctx context.Context, login, hashPassword string) (string, error) {
+func (repo _authRepo) Register(ctx context.Context, login, hashPassword string, isAdmin bool) (string, error) {
 	_, err := repo.PgConn.Exec(
 		ctx,
-		`INSERT INTO public.user(login, password) values ($1, $2)`,
-		login, hashPassword,
+		`INSERT INTO public.user(login, password, isadmin) values ($1, $2, $3)`,
+		login, hashPassword, isAdmin,
 	)
 
 	if err != nil {

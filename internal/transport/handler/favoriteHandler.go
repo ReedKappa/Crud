@@ -8,8 +8,8 @@ import (
 )
 
 type handlerFavorite struct {
-	Login  string
-	BookId int
+	Login  string `json:"login"`
+	BookId int    `json:"bookId"`
 }
 
 func AddFavorite(service service.FavoriteService) gin.HandlerFunc {
@@ -35,7 +35,7 @@ func AddFavorite(service service.FavoriteService) gin.HandlerFunc {
 
 func GetFavorite(service service.FavoriteService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		login := c.GetString("user")
+		login := c.Param("login")
 
 		if login == "" {
 			c.AbortWithStatusJSON(http.StatusBadRequest,

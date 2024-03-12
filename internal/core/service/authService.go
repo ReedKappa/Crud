@@ -15,7 +15,8 @@ import (
 
 type TokenClaims struct {
 	jwt.StandardClaims
-	Login string `json:"login"`
+	Login   string `json:"login"`
+	IsAdmin bool   `json:"isAdmin"`
 }
 
 type _authService struct {
@@ -27,23 +28,23 @@ func NewAuthService(repo repository.AuthRepository) service.AuthService {
 }
 
 func (service _authService) Register(ctx context.Context, login,
-	password string) (string, error) {
+	password string, isAdmin bool) (string, error) {
 
 	hash := generatePassword(password)
 
-	userName, err := service.repo.Register(ctx, login, hash)
+	userName, err := service.repo.Register(ctx, login, hash, isAdmin)
 
 	if err != nil {
 		slog.Error(err.Error())
 		return "", errors.New("не смогли создать пользователя")
 	}
 
-	return generateToken(userName)
+	return generateToken(userName, isAdmin)
 
 }
 
 func (service _authService) GenerateToken(ctx context.Context, login,
-	password string) (string, error) {
+	password string, isAdmin bool) (string, error) {
 
 	hash := generatePassword(password)
 
@@ -54,7 +55,7 @@ func (service _authService) GenerateToken(ctx context.Context, login,
 		return "", errors.New("не смогли войти")
 	}
 
-	return generateToken(login)
+	return generateToken(login, isAdmin)
 
 }
 
@@ -65,13 +66,14 @@ func generatePassword(password string) string {
 	return fmt.Sprintf("%x", hash.Sum([]byte(model.Salt)))
 }
 
-func generateToken(login string) (string, error) {
+func generateToken(login string, isAdmin bool) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &TokenClaims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(model.TokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		Login: login,
+		Login:   login,
+		IsAdmin: isAdmin,
 	})
 	return token.SignedString([]byte(model.SignInKey))
 }
