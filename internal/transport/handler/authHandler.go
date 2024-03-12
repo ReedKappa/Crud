@@ -34,3 +34,27 @@ func RegisterUser(service service.AuthService) gin.HandlerFunc {
 		c.JSON(http.StatusOK, token)
 	}
 }
+
+func Login(service service.AuthService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var user userhttp
+
+		if err := c.BindJSON(&user); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest,
+				gin.H{"message": "неверное тело запроса"})
+
+			return
+		}
+
+		token, err := service.GenerateToken(c.Request.Context(), user.Login, user.Password)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest,
+				gin.H{"message": err.Error()})
+
+			return
+		}
+
+		c.JSON(http.StatusOK, token)
+	}
+}

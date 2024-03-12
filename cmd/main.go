@@ -29,7 +29,9 @@ func main() {
 
 	bookServ := service.NewBookService(manager.BookRepository)
 
-	router := http.InitRoutes(serv, postServ, bookServ)
+	favoriteServ := service.NewFavoriteService(manager.FavoriteRepository)
+
+	router := http.InitRoutes(serv, postServ, bookServ, favoriteServ)
 
 	if err := http2.ListenAndServe(":2222", router); err != nil {
 		log.Fatal(err)

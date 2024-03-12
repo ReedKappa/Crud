@@ -23,13 +23,13 @@ func NewRepo(db *db.Db) repository.AuthRepository {
 func (repo _authRepo) GetUser(ctx context.Context, login, hashPassword string) (string, error) {
 	var user userDB
 
-	row := repo.PgConn.QueryRow(ctx, `SELECT * FROM public.user WHERE login=$1 AND password=$2`, login, hashPassword)
+	row := repo.PgConn.QueryRow(ctx, `SELECT login FROM public.user WHERE login=$1 AND password=$2`, login, hashPassword)
 
-	if err := row.Scan(&user); err != nil {
-		return "", fmt.Errorf("не смогли получить юзера: %x", err)
+	if err := row.Scan(&user.Login); err != nil {
+		return "", fmt.Errorf("не смогли получить юзера: %s", err.Error())
 	}
 
-	return login, nil
+	return user.Login, nil
 
 }
 

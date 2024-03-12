@@ -7,10 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitRoutes(service service.AuthService, postService service.PostService, bookService service.BookService) *gin.Engine {
+func InitRoutes(service service.AuthService, postService service.PostService, bookService service.BookService, favoriteService service.FavoriteService) *gin.Engine {
 	router := gin.New()
 
 	router.POST("/register", handler.RegisterUser(service))
+	router.POST("/login", handler.Login(service))
 
 	api := router.Group("/api", middleware.AuthMiddleware)
 	{
@@ -22,6 +23,9 @@ func InitRoutes(service service.AuthService, postService service.PostService, bo
 		api.GET("/book/name/:name", handler.GetBookByName(bookService))
 		api.GET("/book/author/:author", handler.GetBooksByAuthor(bookService))
 		api.GET("/book/genre/:genre", handler.GetBooksByGenre(bookService))
+
+		api.GET("/favorite/get/:login", handler.GetFavorite(favoriteService))
+		api.GET("/favorite/add", handler.AddFavorite(favoriteService))
 	}
 	return router
 }

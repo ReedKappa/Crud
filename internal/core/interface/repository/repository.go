@@ -22,3 +22,8 @@ type BookRepository interface {
 	GetBooksByGenre(ctx context.Context, bookGenre string) ([]model.Book, error)
 	AddBook(ctx context.Context, book model.Book) (int, error)
 }
+
+type FavoriteRepository interface {
+	AddFavorite(ctx context.Context, login string, bookId int) error
+	GetFavorite(ctx context.Context, login string) ([]model.Book, error)
+}
